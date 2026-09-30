@@ -1,0 +1,75 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:6.0
+    container_name: study_spot_mongodb
+    restart: unless-stopped
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - study_spot_network
+
+  redis:
+    image: redis:7.0-alpine
+    container_name: study_spot_redis
+    restart: unless-stopped
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/data
+    networks:
+      - study_spot_network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: study_spot_backend
+    restart: unless-stopped
+    ports:
+      - '4000:4000'
+    environment:
+      - NODE_ENV=production
+      - PORT=4000
+      - FRONTEND_URL=http://localhost:3000
+      - MONGODB_URI=mongodb://mongodb:27017/ai-study-spot-finder
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - JWT_ACCESS_SECRET=super_secret_jwt_access_key_ai_study_spot_finder_2026_prod
+      - JWT_REFRESH_SECRET=super_secret_jwt_refresh_key_ai_study_spot_finder_2026_prod
+      - AI_PLATFORM_URL=http://ai-platform:5000
+      - AI_PLATFORM_API_KEY=platform_master_key_prod_12345
+      - NOTIFICATION_SERVICE_URL=http://notification-service:3001
+      - NOTIFICATION_SERVICE_API_KEY=notification_service_api_key_12345
+    depends_on:
+      - mongodb
+      - redis
+    networks:
+      - study_spot_network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: study_spot_frontend
+    restart: unless-stopped
+    ports:
+      - '3000:3000'
+    environment:
+      - NEXT_PUBLIC_BACKEND_URL=http://localhost:4000
+      - NEXT_PUBLIC_APP_NAME="StudySphere AI"
+    depends_on:
+      - backend
+    networks:
+      - study_spot_network
+
+networks:
+  study_spot_network:
+    driver: bridge
+
+volumes:
+  mongodb_data:
+  redis_data:
