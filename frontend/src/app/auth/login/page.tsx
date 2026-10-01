@@ -20,8 +20,7 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      await login(email, password);
-      router.push('/explore');
+      await login(email, password, '/explore');
     } catch (err: any) {
       setError(
         err.response?.data?.message || 'Invalid email or password. Please try again.',

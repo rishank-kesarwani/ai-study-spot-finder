@@ -10,7 +10,7 @@ import {
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { SpotsService } from './spots.service';
 import { CreateSpotDto, SpotQueryDto } from './dto/spot-query.dto';
-import { Public } from '../../common/decorators/public.decorator';
+import { OptionalAuth } from '../../common/decorators/optional-auth.decorator';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { AuthUser } from '../../common/interfaces/auth-user.interface';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
@@ -29,37 +29,37 @@ export class SpotsController {
     private readonly notificationService: NotificationService,
   ) {}
 
-  @Public()
+  @OptionalAuth()
   @Get()
-  @ApiOperation({ summary: 'Search and filter study spots' })
-  async getSpots(@Query() query: SpotQueryDto) {
+  @ApiOperation({ summary: 'Search and filter study spots (Optional Auth)' })
+  async getSpots(@Query() query: SpotQueryDto, @CurrentUser() user?: AuthUser) {
     return this.spotsService.findAll(query);
   }
 
-  @Public()
+  @OptionalAuth()
   @Get('featured')
-  @ApiOperation({ summary: 'Get curated featured study spots' })
+  @ApiOperation({ summary: 'Get curated featured study spots (Optional Auth)' })
   async getFeatured() {
     return this.spotsService.getFeatured();
   }
 
-  @Public()
+  @OptionalAuth()
   @Get('categories')
-  @ApiOperation({ summary: 'Get spot category statistics' })
+  @ApiOperation({ summary: 'Get spot category statistics (Optional Auth)' })
   async getCategories() {
     return this.spotsService.getCategoriesSummary();
   }
 
-  @Public()
+  @OptionalAuth()
   @Get('slug/:slug')
-  @ApiOperation({ summary: 'Get study spot details by slug' })
+  @ApiOperation({ summary: 'Get study spot details by slug (Optional Auth)' })
   async getBySlug(@Param('slug') slug: string) {
     return this.spotsService.findBySlug(slug);
   }
 
-  @Public()
+  @OptionalAuth()
   @Get(':id')
-  @ApiOperation({ summary: 'Get study spot details by ID' })
+  @ApiOperation({ summary: 'Get study spot details by ID (Optional Auth)' })
   async getById(@Param('id') id: string) {
     return this.spotsService.findById(id);
   }

@@ -26,8 +26,7 @@ export default function RegisterPage() {
     setIsLoading(true);
 
     try {
-      await register(name, email, password);
-      router.push('/explore');
+      await register(name, email, password, '/explore');
     } catch (err: any) {
       setError(
         err.response?.data?.message || 'Registration failed. An account with this email may already exist.',

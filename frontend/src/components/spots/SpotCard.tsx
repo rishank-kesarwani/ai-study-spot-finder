@@ -24,19 +24,11 @@ interface Props {
 }
 
 export const SpotCard: React.FC<Props> = ({ spot, onBookmarkChange }) => {
-  const { isAuthenticated, openLoginModal, savedSpotIds, setSavedSpotIds } = useAuth();
+  const { isAuthenticated, requireAuth, savedSpotIds, setSavedSpotIds } = useAuth();
   const isSaved = savedSpotIds.includes(spot._id);
   const [isSaving, setIsSaving] = useState(false);
 
-  const handleBookmarkToggle = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    if (!isAuthenticated) {
-      openLoginModal('Log in to save study spots and create custom study lists.');
-      return;
-    }
-
+  const performSave = async () => {
     try {
       setIsSaving(true);
       const res = await spotsApi.toggleSave(spot._id);
@@ -49,6 +41,16 @@ export const SpotCard: React.FC<Props> = ({ spot, onBookmarkChange }) => {
     } finally {
       setIsSaving(false);
     }
+  };
+
+  const handleBookmarkToggle = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    requireAuth(
+      () => performSave(),
+      'Sign in to save your favourite study spots.',
+    );
   };
 
   const defaultPhoto =

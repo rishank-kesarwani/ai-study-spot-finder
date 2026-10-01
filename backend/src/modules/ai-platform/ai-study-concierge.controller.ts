@@ -11,10 +11,10 @@ import {
   ConciergeChatDto,
 } from './ai-study-concierge.service';
 import { AiPlatformClient } from './ai-platform.client';
+import { OptionalAuth } from '../../common/decorators/optional-auth.decorator';
 import { Public } from '../../common/decorators/public.decorator';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { AuthUser } from '../../common/interfaces/auth-user.interface';
-import { OptionalJwtAuthGuard } from '../../common/guards/optional-jwt-auth.guard';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
@@ -28,10 +28,9 @@ export class AiStudyConciergeController {
     private readonly aiClient: AiPlatformClient,
   ) {}
 
-  @Public()
-  @UseGuards(OptionalJwtAuthGuard)
+  @OptionalAuth()
   @Post('concierge/chat')
-  @ApiOperation({ summary: 'Chat with AI Study Spot Concierge (optional auth for personalization)' })
+  @ApiOperation({ summary: 'Chat with AI Study Spot Concierge (Optional Auth for personalization)' })
   async chat(
     @CurrentUser() user: AuthUser | null,
     @Body() dto: ConciergeChatDto,

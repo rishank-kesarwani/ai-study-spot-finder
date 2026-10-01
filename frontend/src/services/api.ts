@@ -42,13 +42,15 @@ const processQueue = (error: any, token: string | null = null) => {
   failedQueue = [];
 };
 
-// Request Interceptor: Attach Access Token
+// Request Interceptor: Attach Access Token only if valid non-empty token exists
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     if (typeof window !== 'undefined') {
       const token = localStorage.getItem('study_access_token');
-      if (token && config.headers) {
-        config.headers.Authorization = `Bearer ${token}`;
+      if (token && token.trim() && token !== 'undefined' && token !== 'null' && config.headers) {
+        config.headers.Authorization = `Bearer ${token.trim()}`;
+      } else if (config.headers && config.headers.Authorization) {
+        delete config.headers.Authorization;
       }
     }
     return config;

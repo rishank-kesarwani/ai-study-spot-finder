@@ -32,7 +32,7 @@ export default function SpotDetailPage() {
   const params = useParams();
   const router = useRouter();
   const id = params.id as string;
-  const { isAuthenticated, openLoginModal, savedSpotIds, setSavedSpotIds } = useAuth();
+  const { isAuthenticated, requireAuth, savedSpotIds, setSavedSpotIds } = useAuth();
 
   const [spot, setSpot] = useState<Spot | null>(null);
   const [reviewsData, setReviewsData] = useState<PaginatedResult<Review>>({
@@ -71,13 +71,8 @@ export default function SpotDetailPage() {
     loadSpotData();
   }, [loadSpotData]);
 
-  const handleBookmarkToggle = async () => {
+  const performBookmark = async () => {
     if (!spot) return;
-    if (!isAuthenticated) {
-      openLoginModal('Log in to bookmark this study spot to your collections.');
-      return;
-    }
-
     try {
       setIsSaving(true);
       const res = await spotsApi.toggleSave(spot._id);
@@ -90,13 +85,15 @@ export default function SpotDetailPage() {
     }
   };
 
-  const handleCheckIn = async () => {
-    if (!spot) return;
-    if (!isAuthenticated) {
-      openLoginModal('Log in to record your study check-in.');
-      return;
-    }
+  const handleBookmarkToggle = () => {
+    requireAuth(
+      () => performBookmark(),
+      'Sign in to save your favourite study spots.',
+    );
+  };
 
+  const performCheckIn = async () => {
+    if (!spot) return;
     try {
       setIsCheckInLoading(true);
       const res = await spotsApi.checkIn(spot._id);
@@ -109,12 +106,14 @@ export default function SpotDetailPage() {
     }
   };
 
-  const handleHelpfulVote = async (reviewId: string) => {
-    if (!isAuthenticated) {
-      openLoginModal('Log in to vote on helpful community tips.');
-      return;
-    }
+  const handleCheckIn = () => {
+    requireAuth(
+      () => performCheckIn(),
+      'Sign in to record your study spot check-in.',
+    );
+  };
 
+  const performHelpfulVote = async (reviewId: string) => {
     try {
       const res = await reviewsApi.toggleHelpful(reviewId);
       setReviewsData((prev) => ({
@@ -126,6 +125,13 @@ export default function SpotDetailPage() {
     } catch (err) {
       console.error('Helpful vote failed:', err);
     }
+  };
+
+  const handleHelpfulVote = (reviewId: string) => {
+    requireAuth(
+      () => performHelpfulVote(reviewId),
+      'Sign in to vote on helpful community tips.',
+    );
   };
 
   if (isLoading) {
@@ -215,11 +221,10 @@ export default function SpotDetailPage() {
 
           <button
             onClick={() => {
-              if (!isAuthenticated) {
-                openLoginModal('Log in to submit a review.');
-              } else {
-                setIsReviewModalOpen(true);
-              }
+              requireAuth(
+                () => setIsReviewModalOpen(true),
+                'Sign in to share your study review and verified noise metrics.',
+              );
             }}
             className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-surface hover:bg-surface-card text-primary-300 font-semibold text-sm border border-primary-500/30 transition-colors"
           >
@@ -343,11 +348,10 @@ export default function SpotDetailPage() {
               </div>
               <button
                 onClick={() => {
-                  if (!isAuthenticated) {
-                    openLoginModal('Log in to add your review.');
-                  } else {
-                    setIsReviewModalOpen(true);
-                  }
+                  requireAuth(
+                    () => setIsReviewModalOpen(true),
+                    'Sign in to share your study review and verified noise metrics.',
+                  );
                 }}
                 className="px-4 py-2 rounded-xl bg-primary-600 hover:bg-primary-500 text-white font-semibold text-xs shadow-glow transition-all"
               >

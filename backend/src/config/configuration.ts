@@ -3,6 +3,7 @@ export default () => ({
   port: parseInt(process.env.PORT || '4000', 10),
   frontendUrl: process.env.FRONTEND_URL || 'http://localhost:3000',
   applicationId: process.env.APPLICATION_ID || 'ai-study-spot-finder',
+  publicAccessEnabled: process.env.PUBLIC_ACCESS_ENABLED !== 'false',
 
   jwt: {
     accessSecret: process.env.JWT_ACCESS_SECRET || 'super_secret_jwt_access_key_ai_study_spot_finder_2026_dev',

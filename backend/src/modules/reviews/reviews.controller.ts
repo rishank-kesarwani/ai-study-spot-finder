@@ -10,7 +10,7 @@ import {
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ReviewsService } from './reviews.service';
 import { CreateReviewDto } from './dto/create-review.dto';
-import { Public } from '../../common/decorators/public.decorator';
+import { OptionalAuth } from '../../common/decorators/optional-auth.decorator';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { AuthUser } from '../../common/interfaces/auth-user.interface';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
@@ -20,9 +20,9 @@ import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 export class ReviewsController {
   constructor(private readonly reviewsService: ReviewsService) {}
 
-  @Public()
+  @OptionalAuth()
   @Get('spot/:spotId')
-  @ApiOperation({ summary: 'Get paginated reviews for a study spot' })
+  @ApiOperation({ summary: 'Get paginated reviews for a study spot (Optional Auth)' })
   async getSpotReviews(
     @Param('spotId') spotId: string,
     @Query('page') page = 1,
