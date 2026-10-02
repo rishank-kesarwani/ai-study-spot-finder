@@ -13,7 +13,7 @@ async function bootstrap() {
   });
 
   const configService = app.get(ConfigService);
-  const port = configService.get<number>('port', 4000);
+  const port = Number(process.env.PORT) || configService.get<number>('port', 4000);
   const frontendUrl = configService.get<string>('frontendUrl', 'http://localhost:3000');
 
   // Security Headers
@@ -22,9 +22,38 @@ async function bootstrap() {
   // Performance Compression
   app.use(compression());
 
-  // CORS
+  // Dynamic CORS Configuration
+  const allowedOrigins: (string | RegExp)[] = [
+    'http://localhost:3000',
+    'http://localhost:3001',
+  ];
+
+  if (frontendUrl) {
+    frontendUrl
+      .split(',')
+      .map((url) => url.trim())
+      .filter(Boolean)
+      .forEach((origin) => {
+        if (!allowedOrigins.includes(origin)) {
+          allowedOrigins.push(origin);
+        }
+      });
+  }
+
   app.enableCors({
-    origin: [frontendUrl, 'http://localhost:3000', 'http://localhost:3001'],
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
+      const isAllowed = allowedOrigins.some((allowed) => {
+        if (typeof allowed === 'string') return allowed === origin;
+        return allowed.test(origin);
+      });
+      if (isAllowed) {
+        callback(null, true);
+      } else {
+        logger.warn(`Blocked CORS request from origin: ${origin}`);
+        callback(null, false);
+      }
+    },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'x-request-id', 'x-api-key'],
@@ -42,8 +71,10 @@ async function bootstrap() {
     }),
   );
 
-  // Global Route Prefix
-  app.setGlobalPrefix('api');
+  // Global Route Prefix (excluding /health for direct platform probes)
+  app.setGlobalPrefix('api', {
+    exclude: ['health'],
+  });
 
   // Swagger OpenAPI Docs
   const config = new DocumentBuilder()
@@ -71,8 +102,8 @@ async function bootstrap() {
 
   app.enableShutdownHooks();
 
-  await app.listen(port);
-  logger.log(`🚀 AI Study Spot Finder Backend running on http://localhost:${port}/api`);
+  await app.listen(port, '0.0.0.0');
+  logger.log(`🚀 AI Study Spot Finder Backend running on port ${port} (0.0.0.0)`);
   logger.log(`📚 Swagger Documentation accessible at http://localhost:${port}/api/docs`);
 }
 

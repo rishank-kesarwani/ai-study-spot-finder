@@ -11,19 +11,16 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
   constructor(private readonly configService: ConfigService) {}
 
   onModuleInit() {
+    const redisUrl = this.configService.get<string>('redis.url') || process.env.REDIS_URL;
     const host = this.configService.get<string>('redis.host', 'localhost');
     const port = this.configService.get<number>('redis.port', 6379);
     const password = this.configService.get<string>('redis.password');
     const db = this.configService.get<number>('redis.db', 0);
 
     try {
-      this.client = new Redis({
-        host,
-        port,
-        password: password || undefined,
-        db,
+      const redisOptions = {
         maxRetriesPerRequest: 2,
-        retryStrategy: (times) => {
+        retryStrategy: (times: number) => {
           if (times > 3) {
             this.logger.warn(`Redis reconnection stopped after ${times} attempts. Running with in-memory fallback.`);
             return null;
@@ -31,11 +28,24 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
           return Math.min(times * 1000, 3000);
         },
         lazyConnect: true,
-      });
+      };
+
+      if (redisUrl && redisUrl !== 'redis://localhost:6379') {
+        this.client = new Redis(redisUrl, redisOptions);
+        this.logger.log(`Connecting to Redis via REDIS_URL`);
+      } else {
+        this.client = new Redis({
+          host,
+          port,
+          password: password || undefined,
+          db,
+          ...redisOptions,
+        });
+      }
 
       this.client.on('connect', () => {
         this.isConnected = true;
-        this.logger.log(`Redis connected successfully to ${host}:${port}`);
+        this.logger.log(`Redis connected successfully`);
       });
 
       this.client.on('error', (err) => {
