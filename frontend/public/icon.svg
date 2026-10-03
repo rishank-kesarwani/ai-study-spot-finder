@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%" fill="none">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0B0F19" />
+      <stop offset="50%" stop-color="#111827" />
+      <stop offset="100%" stop-color="#030712" />
+    </linearGradient>
+
+    <!-- Outer Sphere Glow Gradient -->
+    <linearGradient id="sphereGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366F1" />
+      <stop offset="45%" stop-color="#8B5CF6" />
+      <stop offset="80%" stop-color="#06B6D4" />
+      <stop offset="100%" stop-color="#10B981" />
+    </linearGradient>
+
+    <!-- Inner Core Radiant Gradient -->
+    <radialGradient id="coreGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#818CF8" stop-opacity="0.9" />
+      <stop offset="40%" stop-color="#6366F1" stop-opacity="0.5" />
+      <stop offset="80%" stop-color="#06B6D4" stop-opacity="0.1" />
+      <stop offset="100%" stop-color="#0B0F19" stop-opacity="0" />
+    </radialGradient>
+
+    <!-- Book & Folio Radiant Gradient -->
+    <linearGradient id="folioGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="50%" stop-color="#E0E7FF" />
+      <stop offset="100%" stop-color="#A5B4FC" />
+    </linearGradient>
+
+    <!-- Emerald / Accent Glow -->
+    <linearGradient id="accentGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#10B981" />
+      <stop offset="100%" stop-color="#34D399" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background Base Container with Rounded Corners -->
+  <rect width="512" height="512" rx="128" fill="url(#bgGrad)" />
+  <rect width="508" height="508" x="2" y="2" rx="126" stroke="url(#sphereGrad)" stroke-width="4" stroke-opacity="0.4" />
+
+  <!-- Ambient Radiant Core Glow -->
+  <circle cx="256" cy="256" r="180" fill="url(#coreGlow)" />
+
+  <!-- Orbiting Geolocation & Focus Rings -->
+  <circle cx="256" cy="256" r="160" stroke="url(#sphereGrad)" stroke-width="6" stroke-dasharray="16 12" stroke-opacity="0.5" transform="rotate(-25 256 256)" />
+  
+  <circle cx="256" cy="256" r="120" stroke="url(#sphereGrad)" stroke-width="12" stroke-opacity="0.85" />
+  <ellipse cx="256" cy="256" rx="142" ry="60" stroke="url(#accentGrad)" stroke-width="5" stroke-opacity="0.75" transform="rotate(-30 256 256)" />
+  <circle cx="376" cy="188" r="8" fill="#34D399" />
+
+  <!-- Open Scholarly Folio -->
+  <path d="M 256 312 C 220 286 170 284 136 294 L 136 196 C 172 186 220 188 256 216 Z" fill="url(#folioGrad)" fill-opacity="0.95" />
+  <path d="M 256 312 C 292 286 342 284 376 294 L 376 196 C 340 186 292 188 256 216 Z" fill="url(#folioGrad)" fill-opacity="0.95" />
+  <path d="M 256 214 L 256 320" stroke="#6366F1" stroke-width="4" stroke-linecap="round" />
+
+  <!-- AI Intelligence Core Sparkle -->
+  <g transform="translate(256, 172)">
+    <path d="M 0 -36 Q 0 0 -36 0 Q 0 0 0 36 Q 0 0 36 0 Q 0 0 0 -36 Z" fill="url(#accentGrad)" />
+    <circle cx="0" cy="0" r="7" fill="#FFFFFF" />
+  </g>
+</svg>

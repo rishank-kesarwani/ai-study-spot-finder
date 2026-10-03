@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
-import { BookOpen, Sparkles, Shield, Cpu, Github, Heart } from 'lucide-react';
+import { Logo } from '../ui/Logo';
+import { Sparkles, Shield, Cpu, Github, Heart } from 'lucide-react';
 
 export const Footer: React.FC = () => {
   return (
@@ -8,12 +9,7 @@ export const Footer: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-10">
           <div className="md:col-span-2 space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-primary-600 flex items-center justify-center text-white">
-                <BookOpen className="w-4 h-4" />
-              </div>
-              <span className="text-lg font-bold text-white tracking-tight">StudySphere AI</span>
-            </div>
+            <Logo size="md" showSubtitle={false} href="/" />
             <p className="text-slate-400 text-sm max-w-sm leading-relaxed">
               Autonomous AI Study Spot Intelligence. Discover quiet reading rooms, high-speed WiFi cafes, and late-night workspaces engineered for deep work and scholarly focus.
             </p>

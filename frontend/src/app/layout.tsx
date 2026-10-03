@@ -6,9 +6,27 @@ import { Footer } from '../components/layout/Footer';
 import { LoginRequiredModal } from '../components/auth/LoginRequiredModal';
 
 export const metadata: Metadata = {
-  title: 'StudySphere AI - Intelligent Study Spot & Focus Finder',
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_APP_URL || 'https://study-spot.rishankkesarwani.com',
+  ),
+  title: 'StudySphere AI — Intelligent Study Spot & Focus Finder',
   description:
     'Autonomous AI Study Spot Intelligence. Discover quiet reading rooms, high-speed WiFi cafes, and late-night workspaces engineered for deep work and scholarly focus.',
+  icons: {
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/icon.svg', type: 'image/svg+xml' },
+    ],
+    shortcut: '/favicon.svg',
+    apple: '/icon.svg',
+  },
+  openGraph: {
+    title: 'StudySphere AI — Intelligent Study Spot & Focus Finder',
+    description:
+      'Autonomous AI Study Spot Intelligence. Discover quiet reading rooms, high-speed WiFi cafes, and late-night workspaces.',
+    type: 'website',
+    images: [{ url: '/logo.svg', width: 512, height: 512, alt: 'StudySphere AI' }],
+  },
   keywords: [
     'study spots',
     'cafes with wifi',

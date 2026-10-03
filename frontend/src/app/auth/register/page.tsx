@@ -4,7 +4,8 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../../context/AuthContext';
-import { User, Lock, Mail, ArrowRight, BookOpen, AlertCircle, Sparkles } from 'lucide-react';
+import { Logo } from '../../../components/ui/Logo';
+import { User, Lock, Mail, ArrowRight, AlertCircle, Sparkles } from 'lucide-react';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -39,11 +40,9 @@ export default function RegisterPage() {
   return (
     <div className="min-h-[75vh] flex items-center justify-center p-4">
       <div className="w-full max-w-md p-8 rounded-3xl bg-surface-card border border-surface-border shadow-2xl space-y-6">
-        <div className="text-center space-y-2">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-primary-600 to-emerald-500 flex items-center justify-center text-white mx-auto shadow-glow">
-            <Sparkles className="w-6 h-6 text-amber-300" />
-          </div>
-          <h1 className="text-2xl font-bold text-white tracking-tight">Create Account</h1>
+        <div className="text-center space-y-3 flex flex-col items-center">
+          <Logo size="lg" showSubtitle={false} href="/" />
+          <h1 className="text-2xl font-bold text-white tracking-tight pt-1">Create Account</h1>
           <p className="text-xs text-slate-400">
             Join StudySphere AI to bookmark focus spots, log reviews, and personalize recommendations
           </p>

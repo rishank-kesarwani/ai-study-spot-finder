@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '../../context/AuthContext';
+import { Logo } from '../ui/Logo';
 import {
   Compass,
   Sparkles,
@@ -14,7 +15,6 @@ import {
   Menu,
   X,
   Search,
-  BookOpen,
 } from 'lucide-react';
 
 export const Navbar: React.FC = () => {
@@ -40,19 +40,7 @@ export const Navbar: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Brand Logo */}
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-primary-600 via-indigo-600 to-emerald-500 flex items-center justify-center text-white shadow-glow group-hover:scale-105 transition-transform">
-              <BookOpen className="w-5 h-5" />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-base font-bold text-white tracking-tight flex items-center gap-1.5">
-                StudySphere <span className="text-xs px-1.5 py-0.5 rounded-full bg-primary-500/20 text-primary-300 font-semibold border border-primary-500/30">AI</span>
-              </span>
-              <span className="text-[10px] text-slate-400 font-medium tracking-wide">
-                Smart Study Spot Intelligence
-              </span>
-            </div>
-          </Link>
+          <Logo size="md" href="/" />
 
           {/* Desktop Navigation Links */}
           <div className="hidden md:flex items-center gap-1 lg:gap-2">
