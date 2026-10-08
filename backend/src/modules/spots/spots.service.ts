@@ -3,6 +3,7 @@ import {
   NotFoundException,
   Logger,
   BadRequestException,
+  OnModuleInit,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, FilterQuery } from 'mongoose';
@@ -10,15 +11,32 @@ import { Spot, SpotDocument } from './schemas/spot.schema';
 import { SpotQueryDto, CreateSpotDto } from './dto/spot-query.dto';
 import { RedisService } from '../redis/redis.service';
 import { PaginatedResult } from '../../common/interfaces/api-response.interface';
+import { DEFAULT_STUDY_SPOTS } from './data/default-spots.data';
 
 @Injectable()
-export class SpotsService {
+export class SpotsService implements OnModuleInit {
   private readonly logger = new Logger(SpotsService.name);
 
   constructor(
     @InjectModel(Spot.name) private readonly spotModel: Model<SpotDocument>,
     private readonly redisService: RedisService,
   ) {}
+
+  async onModuleInit() {
+    try {
+      const count = await this.spotModel.countDocuments().exec();
+      if (count === 0) {
+        this.logger.log('Database has 0 study spots. Auto-seeding initial curated study locations...');
+        await this.spotModel.insertMany(DEFAULT_STUDY_SPOTS);
+        await this.redisService.invalidatePrefix('spots:');
+        this.logger.log(`Successfully seeded ${DEFAULT_STUDY_SPOTS.length} default study spots.`);
+      } else {
+        this.logger.log(`Study spot catalog ready (${count} spots indexed).`);
+      }
+    } catch (err: any) {
+      this.logger.warn(`Auto-seeding check skipped or encountered non-fatal error: ${err.message}`);
+    }
+  }
 
   async findAll(queryDto: SpotQueryDto): Promise<PaginatedResult<SpotDocument>> {
     const {
@@ -53,7 +71,8 @@ export class SpotsService {
     if (minRating) filter.rating = { $gte: minRating };
 
     if (query && query.trim().length > 0) {
-      const searchRegex = new RegExp(query.trim(), 'i');
+      const escapedQuery = query.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const searchRegex = new RegExp(escapedQuery, 'i');
       filter.$or = [
         { name: searchRegex },
         { address: searchRegex },
