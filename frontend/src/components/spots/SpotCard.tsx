@@ -142,7 +142,10 @@ export const SpotCard: React.FC<Props> = ({ spot, onBookmarkChange }) => {
 
         {/* View Details Link */}
         <div className="pt-2 border-t border-surface-border flex items-center justify-between text-xs">
-          <span className="text-slate-400 font-medium">{spot.city}</span>
+          <span className="text-slate-400 font-medium">
+            {spot.city}
+            {spot.country ? `, ${spot.country}` : ''}
+          </span>
           <Link
             href={`/spots/${spot._id}`}
             className="text-primary-400 font-semibold hover:text-primary-300 transition-colors flex items-center gap-1"

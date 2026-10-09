@@ -140,6 +140,8 @@ api.interceptors.response.use(
 
 export interface SpotsQueryParams {
   query?: string;
+  country?: string;
+  city?: string;
   category?: SpotCategory;
   noiseLevel?: NoiseLevel;
   wifiSpeed?: WifiSpeed;

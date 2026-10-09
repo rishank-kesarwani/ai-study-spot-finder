@@ -37,6 +37,9 @@ export interface Spot {
   category: SpotCategory;
   address: string;
   city: string;
+  country?: string;
+  state?: string;
+  countryCode?: string;
   location: {
     type: string;
     coordinates: [number, number]; // [lng, lat]

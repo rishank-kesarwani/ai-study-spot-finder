@@ -14,8 +14,40 @@ import { LayoutGrid, Map as MapIcon, RefreshCw, Compass } from 'lucide-react';
 function ExploreContent() {
   const searchParams = useSearchParams();
 
+  // Auto-detect country based on browser timezone if no query/country params present
+  const getInitialCountry = (): string | undefined => {
+    const paramCountry = searchParams.get('country');
+    if (paramCountry) return paramCountry;
+
+    if (typeof window !== 'undefined') {
+      try {
+        const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+        if (timeZone.includes('Calcutta') || timeZone.includes('Kolkata') || timeZone.includes('India')) {
+          return 'India';
+        }
+        if (timeZone.includes('Tokyo') || timeZone.includes('Japan')) {
+          return 'Japan';
+        }
+        if (timeZone.includes('Bangkok') || timeZone.includes('Thailand')) {
+          return 'Thailand';
+        }
+        if (timeZone.includes('Singapore')) {
+          return 'Singapore';
+        }
+        if (timeZone.includes('London') || timeZone.includes('Europe/London')) {
+          return 'United Kingdom';
+        }
+      } catch {
+        // fallback
+      }
+    }
+    return undefined;
+  };
+
   const [filters, setFilters] = useState<SpotsQueryParams>({
     query: searchParams.get('query') || undefined,
+    country: getInitialCountry(),
+    city: searchParams.get('city') || undefined,
     category: (searchParams.get('category') as any) || undefined,
     noiseLevel: (searchParams.get('noiseLevel') as any) || undefined,
     wifiSpeed: (searchParams.get('wifiSpeed') as any) || undefined,
@@ -64,6 +96,10 @@ function ExploreContent() {
   const handleReset = () => {
     setFilters({
       query: undefined,
+      country: undefined,
+      city: undefined,
+      lat: undefined,
+      lng: undefined,
       category: undefined,
       noiseLevel: undefined,
       wifiSpeed: undefined,

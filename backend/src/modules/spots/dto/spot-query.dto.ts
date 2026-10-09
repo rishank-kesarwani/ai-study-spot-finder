@@ -23,6 +23,14 @@ export class SpotQueryDto {
   query?: string;
 
   @IsOptional()
+  @IsString()
+  country?: string;
+
+  @IsOptional()
+  @IsString()
+  city?: string;
+
+  @IsOptional()
   @IsEnum(SpotCategory)
   category?: SpotCategory;
 

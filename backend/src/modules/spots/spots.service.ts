@@ -24,23 +24,27 @@ export class SpotsService implements OnModuleInit {
 
   async onModuleInit() {
     try {
-      const count = await this.spotModel.countDocuments().exec();
-      if (count === 0) {
-        this.logger.log('Database has 0 study spots. Auto-seeding initial curated study locations...');
-        await this.spotModel.insertMany(DEFAULT_STUDY_SPOTS);
-        await this.redisService.invalidatePrefix('spots:');
-        this.logger.log(`Successfully seeded ${DEFAULT_STUDY_SPOTS.length} default study spots.`);
-      } else {
-        this.logger.log(`Study spot catalog ready (${count} spots indexed).`);
+      this.logger.log('Syncing global curated study spot catalog...');
+      for (const spot of DEFAULT_STUDY_SPOTS) {
+        await this.spotModel.updateOne(
+          { slug: spot.slug },
+          { $set: spot },
+          { upsert: true },
+        );
       }
+      await this.redisService.invalidatePrefix('spots:');
+      const count = await this.spotModel.countDocuments().exec();
+      this.logger.log(`Global study spot catalog ready (${count} spots indexed across India, Japan, Thailand, Singapore, UK, USA).`);
     } catch (err: any) {
-      this.logger.warn(`Auto-seeding check skipped or encountered non-fatal error: ${err.message}`);
+      this.logger.warn(`Global spot sync encountered non-fatal notice: ${err.message}`);
     }
   }
 
   async findAll(queryDto: SpotQueryDto): Promise<PaginatedResult<SpotDocument>> {
     const {
       query,
+      country,
+      city,
       category,
       noiseLevel,
       wifiSpeed,
@@ -70,17 +74,39 @@ export class SpotsService implements OnModuleInit {
     if (priceLevel) filter.priceLevel = priceLevel;
     if (minRating) filter.rating = { $gte: minRating };
 
+    if (country && country.trim().length > 0) {
+      const cleanCountry = country.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      filter.$or = [
+        { country: new RegExp(cleanCountry, 'i') },
+        { countryCode: new RegExp(cleanCountry, 'i') },
+      ];
+    }
+
+    if (city && city.trim().length > 0) {
+      const cleanCity = city.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      filter.city = new RegExp(cleanCity, 'i');
+    }
+
     if (query && query.trim().length > 0) {
       const escapedQuery = query.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       const searchRegex = new RegExp(escapedQuery, 'i');
-      filter.$or = [
+      const searchConditions = [
         { name: searchRegex },
         { address: searchRegex },
         { city: searchRegex },
+        { state: searchRegex },
+        { country: searchRegex },
         { tags: searchRegex },
         { aiSummary: searchRegex },
         { bestFor: searchRegex },
       ];
+
+      if (filter.$or) {
+        filter.$and = [{ $or: filter.$or }, { $or: searchConditions }];
+        delete filter.$or;
+      } else {
+        filter.$or = searchConditions;
+      }
     }
 
     // Geospatial search if coordinates provided

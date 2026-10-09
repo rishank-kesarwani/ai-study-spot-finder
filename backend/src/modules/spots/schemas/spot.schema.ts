@@ -73,6 +73,15 @@ export class Spot {
   @Prop({ required: true, trim: true, index: true })
   city: string;
 
+  @Prop({ required: true, trim: true, default: 'United States', index: true })
+  country: string;
+
+  @Prop({ trim: true, default: '', index: true })
+  state?: string;
+
+  @Prop({ trim: true, default: 'US', index: true })
+  countryCode?: string;
+
   @Prop({ type: GeoLocation, required: true, index: '2dsphere' })
   location: GeoLocation;
 
@@ -135,4 +144,12 @@ export class Spot {
 }
 
 export const SpotSchema = SchemaFactory.createForClass(Spot);
-SpotSchema.index({ name: 'text', address: 'text', tags: 'text', aiSummary: 'text', city: 'text' });
+SpotSchema.index({
+  name: 'text',
+  address: 'text',
+  tags: 'text',
+  aiSummary: 'text',
+  city: 'text',
+  country: 'text',
+  state: 'text',
+});

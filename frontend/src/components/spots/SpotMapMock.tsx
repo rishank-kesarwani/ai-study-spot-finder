@@ -20,6 +20,18 @@ export const SpotMapMock: React.FC<Props> = ({
     spots.find((s) => s._id === selectedSpotId) || spots[0] || null,
   );
 
+  React.useEffect(() => {
+    if (selectedSpotId) {
+      const match = spots.find((s) => s._id === selectedSpotId);
+      if (match) setActiveSpot(match);
+      else if (spots.length > 0) setActiveSpot(spots[0]);
+    } else if (spots.length > 0) {
+      setActiveSpot(spots[0]);
+    } else {
+      setActiveSpot(null);
+    }
+  }, [spots, selectedSpotId]);
+
   const handleSpotClick = (spot: Spot) => {
     setActiveSpot(spot);
     if (onSelectSpot) onSelectSpot(spot);
