@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { spotsApi, reviewsApi } from '../../../services/api';
 import { Spot, Review, PaginatedResult } from '../../../types';
 import { NoiseBadge } from '../../../components/ui/NoiseBadge';
@@ -237,18 +238,23 @@ export default function SpotDetailPage() {
       {/* Photo Gallery */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="md:col-span-2 h-72 sm:h-96 rounded-2xl overflow-hidden bg-surface border border-surface-border relative">
-          <img
+          <Image
             src={spot.photos?.[0] || defaultPhoto}
             alt={spot.name}
-            className="w-full h-full object-cover"
+            fill
+            priority
+            sizes="(max-width: 768px) 100vw, 66vw"
+            className="object-cover"
           />
         </div>
         <div className="grid grid-rows-2 gap-4 h-72 sm:h-96">
-          <div className="rounded-2xl overflow-hidden bg-surface border border-surface-border">
-            <img
+          <div className="rounded-2xl overflow-hidden bg-surface border border-surface-border relative">
+            <Image
               src={spot.photos?.[1] || defaultPhoto}
               alt={`${spot.name} view 2`}
-              className="w-full h-full object-cover"
+              fill
+              sizes="(max-width: 768px) 100vw, 33vw"
+              className="object-cover"
             />
           </div>
           <div className="rounded-2xl overflow-hidden bg-surface border border-surface-border relative flex items-center justify-center bg-surface-card">

@@ -61,11 +61,13 @@ export const SpotCard: React.FC<Props> = ({ spot, onBookmarkChange }) => {
     <div className="group flex flex-col bg-surface-card border border-surface-border hover:border-primary-500/50 rounded-2xl overflow-hidden shadow-lg hover:shadow-glow transition-all duration-300">
       {/* Photo Banner with Badges */}
       <div className="relative h-48 w-full overflow-hidden bg-surface">
-        <img
+        <Image
           src={photoUrl}
           alt={spot.name}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-          loading="lazy"
+          fill
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          className="object-cover group-hover:scale-105 transition-transform duration-500"
+          unoptimized
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 

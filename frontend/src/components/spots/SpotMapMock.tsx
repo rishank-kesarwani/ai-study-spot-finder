@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Spot } from '../../types';
 import { MapPin, Navigation, Compass, Layers, Star, Sparkles } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface Props {
   spots: Spot[];
@@ -104,11 +105,14 @@ export const SpotMapMock: React.FC<Props> = ({
       {activeSpot && (
         <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-surface-card/95 backdrop-blur-md p-4 rounded-xl border border-surface-border shadow-2xl">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-surface border border-surface-border overflow-hidden flex-shrink-0">
-              <img
+            <div className="relative w-12 h-12 rounded-xl bg-surface border border-surface-border overflow-hidden flex-shrink-0">
+              <Image
                 src={activeSpot.photos?.[0] || 'https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&w=400&q=80'}
                 alt={activeSpot.name}
-                className="w-full h-full object-cover"
+                fill
+                sizes="48px"
+                className="object-cover"
+                unoptimized
               />
             </div>
             <div>
